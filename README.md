@@ -97,3 +97,81 @@ def read_root():
 ```
 
 ---
+
+## Boas Práticas e Qualidade de Código
+
+O projeto utiliza ferramentas para garantir padronização, qualidade e automação:
+
+- **ruff**: Lint e formatação de código Python.
+- **pytest** e **pytest-cov**: Testes automatizados e relatório de cobertura.
+- **taskipy**: Automatização de tarefas comuns do projeto.
+
+### Ruff
+
+O Ruff está configurado para aplicar as seguintes regras (seletores):
+
+- **I**: Organização de imports (isort)
+- **F**: Pyflakes (erros comuns)
+- **E**: Erros de estilo (pycodestyle)
+- **W**: Avisos de estilo (pycodestyle)
+- **PL**: Pylint (boas práticas)
+- **PT**: Pytest (boas práticas para testes)
+
+Principais comandos:
+```sh
+poetry run ruff check .
+poetry run ruff format .
+```
+
+### Testes Automatizados
+
+- Para rodar todos os testes:
+  ```sh
+  poetry run pytest
+  ```
+- Para rodar os testes com relatório de cobertura e saída detalhada:
+  ```sh
+  poetry run pytest --cov=fastapi_2025 -v
+  ```
+
+- Para gerar relatório de cobertura em HTML:
+  ```sh
+  poetry run coverage html
+  ```
+  O relatório será salvo na pasta `htmlcov`. Abra `htmlcov/index.html` no navegador.
+
+### Automatização de Tarefas com Taskipy
+
+Tarefas configuradas no `pyproject.toml`:
+
+- **lint**: `poetry run task lint` — Lint no código.
+- **pre_format**: `poetry run task pre_format` — Corrige problemas simples de lint.
+- **format**: `poetry run task format` — Formata o código.
+- **run**: `poetry run task run` — Sobe o servidor FastAPI.
+- **test**: `poetry run task test` — Executa lint, testes e gera cobertura HTML automaticamente.
+
+---
+
+## Testes de API
+
+Exemplo de teste para o endpoint raiz:
+
+Arquivo: `tests/test_app.py`
+
+```python
+from http import HTTPStatus
+from fastapi.testclient import TestClient
+from fastapi_2025.app import app
+
+def test_read_root():
+    client = TestClient(app)
+    response = client.get('/')
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'message': 'Welcome to the FastAPI application!'
+    }
+```
+
+---
+
+

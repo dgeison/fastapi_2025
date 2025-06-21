@@ -11,3 +11,47 @@ dependencies = ["fastapi[standard] (>=0.115.13,<0.116.0)"]
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.12.0"
+pytest = "^8.4.1"
+pytest-cov = "^6.2.1"
+taskipy = "^1.14.1"
+
+[tool.ruff]
+line-length = 79                # pep8
+extend-exclude = ['migrations']
+
+[tool.ruff.lint]
+preview = true
+# Ativa os principais seletores de lint:
+select = [
+    "I",  # Organização de imports (isort)
+    "F",  # Pyflakes (erros comuns)
+    "E",  # Erros de estilo (pycodestyle)
+    "W",  # Avisos de estilo (pycodestyle)
+    "PL", # Pylint (boas práticas)
+    "PT", # Pytest (boas práticas para testes)
+]
+
+[tool.ruff.format]
+preview = true
+# Ativa os principais seletores de formatação:
+quote-style = "single" # Usa aspas simples
+
+[tool.pytest.ini_options]
+pythonpath = "."
+addopts = '-p no:warnings'
+
+
+[tool.taskipy.tasks]
+lint = "ruff check ."
+pre_format = "ruff check . --fix"
+format = "ruff format ."
+run = 'fastapi dev fastapi_2025/app.py'
+pre_test = 'task lint'
+test = 'pytest -s -x --cov=fastapi_2025 -vv'
+post_test = 'coverage html'
+
+
+
