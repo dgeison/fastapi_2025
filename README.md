@@ -97,5 +97,3 @@ def read_root():
 ```
 
 ---
-
-Se quiser adicionar exemplos de request/response, testes ou outras instruções,
