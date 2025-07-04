@@ -53,3 +53,51 @@ def test_create_user(client):
         'username': 'alice',
         'email': 'alice@example.com',
     }
+
+
+def test_read_users(client):
+    """
+    Testa o endpoint de leitura de usuários ("/users/").
+
+    Verifica se a lista de usuários retornada contém o usuário
+    criado anteriormente e se o status HTTP é 200 (OK).
+    """
+    # Arrange (Organizar):
+    # client = TestClient(app)
+    response = client.get('/users/')
+
+    # Assert (Verificar):
+    # Verifica se o código de status da resposta é 200 (OK)
+    assert response.status_code == HTTPStatus.OK
+
+    # Verifica se a lista de usuários contém o usuário criado
+    assert response.json() == {
+        'users': [{'id': 1, 'username': 'alice', 'email': 'alice@example.com'}]
+    }
+
+
+def test_update_user(client):
+    response = client.put(
+        '/users/1',
+        json={
+            'username': 'bob',
+            'email': 'bob@example.com',
+            'password': 'mynewpassword',
+        },
+    )
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'username': 'bob',
+        'email': 'bob@example.com',
+        'id': 1,
+    }
+
+
+def test_delete_user(client):
+    response = client.delete('/users/1')
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'username': 'bob',
+        'email': 'bob@example.com',
+        'id': 1,
+    }
