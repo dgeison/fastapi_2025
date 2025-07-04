@@ -101,3 +101,47 @@ def test_delete_user(client):
         'email': 'bob@example.com',
         'id': 1,
     }
+
+
+def test_update_user_not_found(client):
+    response = client.put(
+        '/users/999',
+        json={
+            'username': 'ghost',
+            'email': 'ghost@example.com',
+            'password': 'nopassword',
+        },
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User with id 999 not found'}
+
+
+def test_delete_user_not_found(client):
+    response = client.delete('/users/999')
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User with id 999 not found'}
+
+
+def test_read_user_ok(client):
+    # Cria um usuário para garantir que existe
+    client.post(
+        '/users/',
+        json={
+            'username': 'charlie',
+            'email': 'charlie@example.com',
+            'password': 'pass',
+        },
+    )
+    response = client.get('/users/1')
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'id': 1,
+        'username': 'charlie',
+        'email': 'charlie@example.com',
+    }
+
+
+def test_read_user_not_found(client):
+    response = client.get('/users/999')
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User with id 999 not found'}
